@@ -15,3 +15,30 @@ code {
 .required-label {
   color: gray; /* Set the desired color for the required label */
 }
+
+/* Add these styles to your CSS file */
+.custom-toast-error .p-toast-message {
+  background-color: #ffcccc; /* Adjust the background color as needed */
+  color: #990000; /* Adjust the text color as needed */
+}
+
+:root {
+  --yellow-color: rgb(253, 254, 161);
+  --background-color: #ffffff;
+  --blue-color: #0000ac;
+
+  --primary-text-color: #0a0a0a;
+  --secondary-text-color: #ffffff;
+  --toggle-bg: #f0eb9d;
+  --toggle-fg: #ffd000;
+}
+
+[data-theme="dark"] {
+  --yellow-color: rgb(211, 215, 105);
+  --background-color: #6e6e6e;
+  --blue-color: #000949;
+  --primary-text-color: #ffffff;
+  --secondary-text-color: #000000;
+  --toggle-bg: #f0eb9d;
+  --toggle-fg: #ffd000;
+}

@@ -8,6 +8,9 @@ import { useState, useMemo } from "react";
 import { mdiFilterMenuOutline, mdiMagnify, mdiPlus } from "@mdi/js";
 import { Modal } from "react-bootstrap";
 import NewList from "./NewList";
+import { ShoppingListService } from "../ShoppingListService";
+import LoadingSpinner from "./utils/LoadingSpinner";
+import { useTranslation } from "react-i18next";
 
 function AllLists() {
   const loggedUser = { name: "Manila", id: "007" };
@@ -15,26 +18,31 @@ function AllLists() {
   const [searchBy, setSearchBy] = useState("");
   const [createListForm, setCreateListForm] = useState(false);
   const [allLists, setAllLists] = useState([]);
-  const toast = useRef(null);
+  const [callStatus, setCallStatus] = useState({ state: "pending" });
+  const { t } = useTranslation();
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/lists/`, {
-      method: "GET",
-    }).then(async (response) => {
+    ShoppingListService.getAllLists().then(async (response) => {
       const serverLists = await response.json();
       switch (response.status) {
         case 200: {
           setAllLists(serverLists);
-
+          setTimeout(() => {
+            setCallStatus({ state: "ok" });
+          }, 1000);
+          // setCallStatus({ state: "ok" });
+          break;
+        }
+        case 400: {
+          alert(response.body.message);
+          break;
+        }
+        case 500: {
+          alert(response.body.message);
           break;
         }
         default: {
-          toast.current.show({
-            severity: "danger",
-            summary: "Fail",
-            detail: `Lists were not uploaded`,
-            life: 3000,
-          });
+          alert(response.body.message);
         }
       }
     });
@@ -96,89 +104,104 @@ function AllLists() {
     );
   }
 
-  return (
-    <div>
-      <div>
-        <Navbar
+  switch (callStatus.state) {
+    case "ok":
+      return (
+        <div
           style={{
-            backgroundColor: "lightyellow",
-            gap: "5px",
+            backgroundColor: "var(--background-color)",
           }}
-          className="flex-md-row flex-column"
         >
-          <Navbar.Brand
-            style={{
-              paddingLeft: "10px",
-              fontSize: "1.5rem",
-              fontWeight: "bold",
-              marginRight: "auto",
-            }}
-          >
-            My shopping lists = domácí úkol č. 3
-          </Navbar.Brand>
-          <Button
-            severity="success"
-            onClick={() => setCreateListForm(true)}
-            style={{ borderRadius: "5px", marginRight: "30px" }}
-          >
-            <Icon size={1} path={mdiPlus} />
-            New shopping list
-          </Button>
-          <Form
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "5px",
-              marginRight: "30px",
-            }}
-          >
-            <Form.Select
-              style={{ height: "42px" }}
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              required
+          <div>
+            <Navbar
+              style={{
+                backgroundColor: "var(--background-color)",
+                gap: "5px",
+                borderBottom: "2px solid grey",
+              }}
+              className="flex-md-row flex-column"
             >
-              <option value="" disabled>
-                All
-              </option>
-              <option value={""}>all</option>
-              <option value={true}>archived</option>
-            </Form.Select>
-            <Icon path={mdiFilterMenuOutline} size={3} />
-          </Form>
-          <Form
-            style={{ display: "flex", gap: "5px", marginRight: "30px" }}
-            onSubmit={handleSearch}
+              <Navbar.Brand
+                style={{
+                  paddingLeft: "10px",
+                  fontSize: "1.5rem",
+                  fontWeight: "bold",
+                  marginRight: "auto",
+                }}
+              >
+                {t("myLists")}
+              </Navbar.Brand>
+              <Button
+                severity="success"
+                onClick={() => setCreateListForm(true)}
+                style={{ borderRadius: "5px", marginRight: "30px" }}
+              >
+                <Icon size={1} path={mdiPlus} />
+                {t("newList")}
+              </Button>
+              <Form
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: "5px",
+                  marginRight: "30px",
+                }}
+              >
+                <Form.Select
+                  style={{ height: "42px" }}
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>
+                    {t("all")}
+                  </option>
+                  <option value={""}>{t("all")}</option>
+                  <option value={true}>{t("archived")}</option>
+                </Form.Select>
+                <Icon path={mdiFilterMenuOutline} size={3} />
+              </Form>
+              <Form
+                style={{ display: "flex", gap: "5px", marginRight: "30px" }}
+                onSubmit={handleSearch}
+              >
+                <Form.Control
+                  id={"searchInput"}
+                  style={{ maxWidth: "150px" }}
+                  type="search"
+                  placeholder={t("search")}
+                  aria-label="Search"
+                  onChange={handleSearchDelete}
+                />
+                <Button
+                  style={{ borderRadius: "5px" }}
+                  severity="success"
+                  type="submit"
+                >
+                  <Icon size={1} path={mdiMagnify} />
+                </Button>
+              </Form>
+            </Navbar>
+            {getAllLists(filteredLists)}
+          </div>
+          <Modal
+            show={createListForm}
+            onHide={() => setCreateListForm(false)}
+            size="lg"
           >
-            <Form.Control
-              id={"searchInput"}
-              style={{ maxWidth: "150px" }}
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-              onChange={handleSearchDelete}
+            <NewList
+              setCreateListForm={setCreateListForm}
+              loggedUser={loggedUser}
             />
-            <Button
-              style={{ borderRadius: "5px" }}
-              severity="success"
-              type="submit"
-            >
-              <Icon size={1} path={mdiMagnify} />
-            </Button>
-          </Form>
-        </Navbar>
-        {getAllLists(filteredLists)}
-      </div>
-      <Modal
-        show={createListForm}
-        onHide={() => setCreateListForm(false)}
-        size="lg"
-      >
-        <NewList loggedUser={loggedUser} />
-      </Modal>
-    </div>
-  );
+          </Modal>
+        </div>
+      );
+    case "error":
+      return <div>{t("error")}</div>;
+    default:
+      return <LoadingSpinner />;
+  }
 }
 
 export default AllLists;

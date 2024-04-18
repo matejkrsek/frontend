@@ -1,8 +1,10 @@
-import { mdiPlus } from "@mdi/js";
 import { Button } from "primereact/button";
-import { useState } from "react";
-import { Col, Form, Modal, Row } from "react-bootstrap";
+import { useRef, useState } from "react";
+import { Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { ShoppingListService } from "../ShoppingListService";
+import { Toast } from "primereact/toast";
+import { useTranslation } from "react-i18next";
 
 function NewList(props) {
   const defaultForm = {
@@ -13,19 +15,50 @@ function NewList(props) {
     items: [],
   };
   let navigate = useNavigate();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState(defaultForm);
 
+  const toast = useRef(null);
+
   const createNewList = () => {
-    fetch(`http://localhost:3001/api/lists/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    }).then(async (response) => {
+    ShoppingListService.postShoppingList(formData).then(async (response) => {
       const serverList = await response.json();
-      console.log(serverList);
-      navigate("/listDetail?id=" + serverList.id);
+      switch (response.status) {
+        case 200: {
+          toast.current.show({
+            severity: "success",
+            summary: t("toastCreate200Summary"),
+            detail: t("success"),
+            life: 2000,
+          });
+          setTimeout(() => {
+            navigate("/listDetail?id=" + serverList.id);
+          }, 2000);
+
+          break;
+        }
+        case 404: {
+          toast.current.show({
+            severity: "error",
+            summary: t("toastCreate404Summary"),
+            detail: t("error"),
+            life: 3000,
+          });
+          break;
+        }
+        case 500: {
+          toast.current.show({
+            severity: "error",
+            summary: t("toastCreate500Summary"),
+            detail: t("error"),
+            life: 3000,
+          });
+          break;
+        }
+        default: {
+          alert(response.body.message);
+        }
+      }
     });
   };
 
@@ -46,12 +79,14 @@ function NewList(props) {
 
   return (
     <div>
+      <Toast ref={toast} />
       <Modal.Header closeButton>
-        <Modal.Title>Create new shopping list</Modal.Title>
+        <Modal.Title>{t("newList")}</Modal.Title>
       </Modal.Header>
+
       <Modal.Body>
         <Form.Group className="mb-3">
-          <Form.Label>Title</Form.Label>
+          <Form.Label>{t("formTitle")}</Form.Label>
           <Form.Control
             type="text"
             value={formData.title}
@@ -60,7 +95,7 @@ function NewList(props) {
             required
           />
           <Form.Control.Feedback type="invalid">
-            Write from 1 to 25 characters
+            {t("formFeedback")}
           </Form.Control.Feedback>
         </Form.Group>
       </Modal.Body>
@@ -69,10 +104,10 @@ function NewList(props) {
           <div className="d-flex flex-row gap-2">
             <Button
               severity="secondary"
-              onClick={() => closeNewList()}
+              onClick={closeNewList}
               style={{ borderRadius: "5px" }}
             >
-              Close
+              {t("close")}
             </Button>
             <Button
               onClick={createNewList}
@@ -80,7 +115,7 @@ function NewList(props) {
               type="submit"
               style={{ borderRadius: "5px" }}
             >
-              Create
+              {t("create")}
             </Button>
           </div>
         </div>

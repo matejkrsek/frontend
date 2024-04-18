@@ -1,6 +1,5 @@
 .App {
   padding-top: 60px;
-  margin: 16px;
 }
 .App-header {
   background-color: #282c34;
@@ -26,10 +25,10 @@
   }
 }
 
-.classroomNameHeader {
-  background-color: #f59898;
-  padding: 4px 12px;
-  border-radius: 8px;
+/* Add these styles to your CSS file */
+.custom-toast-error .p-toast-message {
+  background-color: #ffcccc; /* Adjust the background color as needed */
+  color: #990000; /* Adjust the text color as needed */
 }
 
 .test {

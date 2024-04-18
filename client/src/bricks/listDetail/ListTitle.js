@@ -1,14 +1,16 @@
 import { mdiBackspace, mdiPencil } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Dialog } from "primereact/dialog";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 function ListTitle(props) {
   const [editTitleModal, setEditTitleModal] = useState(false);
 
   const [thisList, setThisList] = useState(props.thisList);
   const [title, setTitle] = useState(thisList.title);
+  const { t } = useTranslation();
 
   const handleEditTitle = (newTitle) => {
     const updatedList = {
@@ -33,26 +35,29 @@ function ListTitle(props) {
   };
 
   return (
-    <div style={{ display: "flex", padding: "1vh" }}>
+    <div style={{ display: "flex" }}>
       <Icon
         onClick={props.handleGoBack}
         size={2}
         path={mdiBackspace}
-        style={{ color: "black" }} // Default color
+        style={{ color: "var(--darkbackground-color" }} // Default color
         onMouseEnter={(e) => (e.target.style.color = "gray")} // Gray color on hover
-        onMouseLeave={(e) => (e.target.style.color = "black")} // Back to default color when mouse leaves
+        onMouseLeave={(e) =>
+          (e.target.style.color = "var(--darkbackground-color")
+        } // Back to default color when mouse leaves
       />
 
       <div
         style={{
           fontSize: "5vh",
           fontWeight: "bold",
-          marginLeft: "3vh",
-          gap: "2vh",
+          marginLeft: "2vh",
+          marginBottom: "1vh",
+          gap: "1vh",
           display: "flex",
         }}
       >
-        <div>{thisList.title} = domácí úkol č. 2</div>
+        <div>{thisList.title}</div>
         {props.isAuthor ? (
           <Icon
             onClick={() => setEditTitleModal(true)}
@@ -68,7 +73,7 @@ function ListTitle(props) {
         visible={editTitleModal}
         style={{ width: "32rem" }}
         breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-        header="Confirmation"
+        header={t("confirmation")}
         modal
         onHide={() => setEditTitleModal(false)}
         footer={
@@ -78,14 +83,14 @@ function ListTitle(props) {
               style={{ marginRight: "10px", borderRadius: "5px" }}
               severity="secondary"
             >
-              Close
+              {t("close")}
             </Button>
             <Button
               onClick={() => handleEditTitle(title)}
               severity="danger"
               style={{ marginRight: "10px", borderRadius: "5px" }}
             >
-              Submit
+              {t("submit")}
             </Button>
           </React.Fragment>
         }

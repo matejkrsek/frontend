@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./routes/Home";
+import "./i18n";
 
 import ShoppingListsRoute from "./routes/ShoppingListsRoute";
 import ListDetailRoute from "./routes/ListDetailRoute";

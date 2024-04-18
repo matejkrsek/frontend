@@ -9,9 +9,12 @@ import {
   mdiPlus,
 } from "@mdi/js";
 import { Button } from "react-bootstrap";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { Dialog } from "primereact/dialog";
+import { ShoppingListService } from "../../ShoppingListService";
+import { Toast } from "primereact/toast";
+import { useTranslation } from "react-i18next";
 
 function ItemsInterface(props) {
   const [deleteItemDialog, setDeleteItemDialog] = useState(false);
@@ -20,6 +23,8 @@ function ItemsInterface(props) {
   const [itemToDelete, setItemToDelete] = useState({ name: "", id: "" });
   const [thisList, setThisList] = useState(props.thisList);
   const { v4: uuidv4 } = require("uuid");
+  const toast = useRef(null);
+  const { t } = useTranslation();
 
   const handleShowOnlyUnsolvedChange = () => {
     showOnlyUnsolved ? setShowOnlyUnsolved(false) : setShowOnlyUnsolved(true);
@@ -39,17 +44,25 @@ function ItemsInterface(props) {
         (everyitem.isSolved = everyitem.isSolved ? false : true);
     });
 
-    fetch(`http://localhost:3001/api/lists/${thisList.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedList),
-    }).then((response) => {
-      if (response.ok) {
-        setThisList(updatedList);
-      } else {
-        // Handle error
+    ShoppingListService.editShoppingList(updatedList).then(async (response) => {
+      await response.json();
+      console.log(response.status);
+      switch (response.status) {
+        case 200: {
+          setThisList(updatedList);
+          break;
+        }
+        case 404: {
+          alert(response.body.message);
+          break;
+        }
+        case 500: {
+          alert(response.body.message);
+          break;
+        }
+        default: {
+          alert(response.body.message);
+        }
       }
     });
   };
@@ -60,26 +73,40 @@ function ItemsInterface(props) {
     );
 
     if (indexToDelete !== -1) {
-      console.log("Index to delete:", indexToDelete);
-
       const updatedList = {
         ...thisList,
         items: thisList.items.filter((_, index) => index !== indexToDelete),
       };
-      fetch(`http://localhost:3001/api/lists/${thisList.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedList),
-      }).then((response) => {
-        if (response.ok) {
-          setThisList(updatedList);
-          setDeleteItemDialog(false);
-        } else {
-          // Handle error
+      ShoppingListService.editShoppingList(updatedList).then(
+        async (response) => {
+          await response.json();
+          console.log(response.status);
+          switch (response.status) {
+            case 200: {
+              toast.current.show({
+                severity: "success",
+                summary: t("toastDeleteItem200Summary"),
+                detail: t("success"),
+                life: 3000,
+              });
+              setThisList(updatedList);
+              setDeleteItemDialog(false);
+              break;
+            }
+            case 404: {
+              alert(response.body.message);
+              break;
+            }
+            case 500: {
+              alert(response.body.message);
+              break;
+            }
+            default: {
+              alert(response.body.message);
+            }
+          }
         }
-      });
+      );
     } else {
       // Objekt nebyl nalezen
       console.log("Item with this ID not found.");
@@ -94,29 +121,41 @@ function ItemsInterface(props) {
         items: [...thisList.items, newItem],
       };
 
-      fetch(`http://localhost:3001/api/lists/${thisList.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedList),
-      }).then((response) => {
-        if (response.ok) {
-          setThisList(updatedList);
-          setItemName("");
-        } else {
-          // Handle error
+      ShoppingListService.editShoppingList(updatedList).then(
+        async (response) => {
+          await response.json();
+          console.log(response.status);
+          switch (response.status) {
+            case 200: {
+              setThisList(updatedList);
+              setItemName("");
+              break;
+            }
+            case 404: {
+              alert(response.body.message);
+              break;
+            }
+            case 500: {
+              alert(response.body.message);
+              break;
+            }
+            default: {
+              alert(response.body.message);
+            }
+          }
         }
-      });
+      );
     }
   };
 
   return (
-    <div style={{ marginBottom: "5vh", minWidth: "30%" }}>
+    <div style={{ paddingBottom: "5vh", minWidth: "30%", padding: "10px" }}>
+      <Toast ref={toast} />
+
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{ fontWeight: "bold" }}>Items of this shopping list:</div>
+        <div style={{ fontWeight: "bold" }}>{t("items")}</div>
         <div style={{ fontStyle: "italic" }}>
-          Show only unsolved items{" "}
+          {t("showUnsolved")}
           {showOnlyUnsolved ? (
             <Icon
               onClick={() => handleShowOnlyUnsolvedChange()}
@@ -213,7 +252,7 @@ function ItemsInterface(props) {
         visible={deleteItemDialog}
         style={{ width: "32rem" }}
         breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-        header="Confirmation"
+        header={t("confirmation")}
         modal
         onHide={() => setDeleteItemDialog(false)}
         footer={
@@ -223,27 +262,25 @@ function ItemsInterface(props) {
               style={{ marginRight: "10px", borderRadius: "5px" }}
               variant="secondary"
             >
-              No
+              {t("no")}
             </Button>
             <Button
               variant="danger"
               onClick={() => handleDeleteItem(itemToDelete)}
               style={{ marginRight: "10px", borderRadius: "5px" }}
             >
-              Yes
+              {t("yes")}
             </Button>
           </React.Fragment>
         }
       >
         <div className="confirmation-content">
-          <span>
-            Do you really want to delete the item <b>{itemToDelete.name}</b>?
-          </span>
+          <span>{t("wantToDeleteItem", { item: itemToDelete.name })}</span>
         </div>
       </Dialog>
 
       <>
-        <Form.Label htmlFor="addItem">Add Item</Form.Label>
+        <Form.Label htmlFor="addItem">{t("addItem")}</Form.Label>
         <div style={{ display: "flex", gap: "1vh" }}>
           <Form.Control
             type="form-text"

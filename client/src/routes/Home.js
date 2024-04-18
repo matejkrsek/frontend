@@ -1,9 +1,11 @@
 import { Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap style
+import { useTranslation } from "react-i18next";
 
 function Home() {
   let navigate = useNavigate();
+  let { t } = useTranslation();
 
   const handleNavLinkClick = () => {
     navigate("/shoppingLists");
@@ -20,15 +22,10 @@ function Home() {
         fontWeight: "bold",
         fontSize: "larger",
         paddingTop: "20vh", // Added margin-top to move the content to the top quarter
-        // backgroundColor: "lightyellow",
-        backgroundColor: "lightyellow",
+        backgroundColor: "var(--yellow-color)",
       }}
     >
-      <div>
-        Welcome to the n.1 shopping lists application on the planet. If you
-        would like to get more information about any shopping list, feel free to
-        follow here{" "}
-      </div>
+      <div>{t("welcomeText")}</div>
 
       <br></br>
       <Nav.Link
@@ -40,11 +37,11 @@ function Home() {
           fontSize: "x-large",
         }}
       >
-        Shopping Lists
+        {t("shoppingLists")}
       </Nav.Link>
       <br></br>
       <br></br>
-      <div style={{ fontStyle: "italic" }}>
+      <div style={{ fontSize: "small", fontStyle: "italic" }}>
         aplikace se chová, jako by byl přihlášen uživatel "Manila" v kódu jako
         proměnná loggedUser
       </div>

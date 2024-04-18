@@ -6,33 +6,48 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import Container from "react-bootstrap/Container";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import { useTranslation } from "react-i18next";
+import LanguageSwitch from "./bricks/utils/LanguageSwitch";
+import { useState } from "react";
+import DarkModeToggle from "./bricks/utils/DarkModeToggle";
 
 function App() {
+  const [isDark, setIsDark] = useState(false);
   let navigate = useNavigate();
 
+  const { t } = useTranslation();
+
   return (
-    <div className="App">
+    <div className="App" data-theme={isDark ? "dark" : "light"}>
       <Navbar fixed="top" expand={"sm"} bg="dark" variant="dark">
         <Container fluid>
-          <Navbar.Brand onClick={() => navigate("/")} style={{ color: "red" }}>
-            The world n. 1 shopping lists application
+          <Navbar.Brand
+            onClick={() => navigate("/")}
+            style={{ color: "var(--yellow-color)" }}
+          >
+            {t("appTitle")}
           </Navbar.Brand>
           <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-sm`} />
           <Navbar.Offcanvas id={`offcanvasNavbar-expand-sm`}>
             <Offcanvas.Header closeButton>
               <Offcanvas.Title id={`offcanvasNavbarLabel-expand-sm`}>
-                Shopping lists
+                {t("shoppingLists")}
               </Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav
                 variant="underline"
                 defaultActiveKey="/"
-                className="justify-content-end flex-grow-1 pe-3"
+                className="justify-content-end flex-grow-1 pe-3 align-items-center"
               >
-                <Nav.Link onClick={() => navigate("/")}>Home</Nav.Link>
+                <DarkModeToggle
+                  isChecked={isDark}
+                  handleChange={() => setIsDark(!isDark)}
+                />
+                <LanguageSwitch />
+                <Nav.Link onClick={() => navigate("/")}>{t("home")}</Nav.Link>
                 <Nav.Link onClick={() => navigate("/shoppingLists")}>
-                  Shopping lists
+                  {t("shoppingLists")}
                 </Nav.Link>
               </Nav>
             </Offcanvas.Body>

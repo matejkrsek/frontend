@@ -3,7 +3,9 @@ import AllLists from "../bricks/AllLists";
 
 function ShoppingListsRoute() {
   return (
-    <div>
+    <div
+      style={{ backgroundColor: "var(--background-color)", height: "100vh" }}
+    >
       <AllLists />
     </div>
   );
