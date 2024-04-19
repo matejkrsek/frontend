@@ -12,6 +12,9 @@ import { ShoppingListService } from "../ShoppingListService";
 import LoadingSpinner from "./utils/LoadingSpinner";
 import { useTranslation } from "react-i18next";
 
+import LineChart from "./utils/BarChart";
+import BarChart from "./utils/BarChart";
+
 function AllLists() {
   const loggedUser = { name: "Manila", id: "007" };
   const [filter, setFilter] = useState("");
@@ -184,6 +187,7 @@ function AllLists() {
               </Form>
             </Navbar>
             {getAllLists(filteredLists)}
+            <BarChart lists={allLists} />
           </div>
           <Modal
             show={createListForm}

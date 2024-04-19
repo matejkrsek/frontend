@@ -15,6 +15,7 @@ import { Dialog } from "primereact/dialog";
 import { ShoppingListService } from "../../ShoppingListService";
 import { Toast } from "primereact/toast";
 import { useTranslation } from "react-i18next";
+import PieChart from "../utils/PieChart";
 
 function ItemsInterface(props) {
   const [deleteItemDialog, setDeleteItemDialog] = useState(false);
@@ -299,6 +300,7 @@ function ItemsInterface(props) {
           </Button>
         </div>
       </>
+      <PieChart list={thisList} />
     </div>
   );
 }

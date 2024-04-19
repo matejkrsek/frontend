@@ -113,6 +113,21 @@ const LISTS = [
     ],
     items: [
       {
+        name: "bluebull 6 plechovek",
+        isSolved: false,
+        id: "45576abtsdcsdbzjnd",
+      },
+      {
+        name: " 8 plechovek plzně",
+        isSolved: true,
+        id: "455sfresaasdsdbzjnd",
+      },
+      {
+        name: "blueberries",
+        isSolved: false,
+        id: "45576aasdsasdbzjnd",
+      },
+      {
         name: "bluebull 8 plechovek",
         isSolved: false,
         id: "45576aasdsdbzjnd",
@@ -141,7 +156,7 @@ const LISTS = [
   },
   {
     author: "Parler",
-    title: "Neděle pasdasdassasarty na kole s R",
+    title: "Neděle kolo s R",
     isArchived: false,
     id: "8fdq9f3f5e2b4re32et",
     showOnlyUnsolved: "false",
@@ -164,16 +179,6 @@ const LISTS = [
       },
     ],
     items: [
-      {
-        name: "kapesník XL",
-        isSolved: false,
-        id: "451assdasdvrd",
-      },
-      {
-        name: "jahodový juice 2x",
-        isSolved: false,
-        id: "4564essfvsfssd",
-      },
       {
         name: "bluebull 8 plechovek",
         isSolved: true,
@@ -210,11 +215,7 @@ const LISTS = [
         isSolved: false,
         id: "451assdasdvrd",
       },
-      {
-        name: "jahodový juice 2x",
-        isSolved: false,
-        id: "4564essfvsfssd",
-      },
+
       {
         name: "bluebull 8 plechovek",
         isSolved: true,
@@ -253,6 +254,11 @@ const LISTS = [
         isSolved: true,
         id: "aqswdqw654d",
       },
+      {
+        name: "Cola light",
+        isSolved: true,
+        id: "aqswasddqw654d",
+      },
     ],
   },
   {
@@ -275,6 +281,16 @@ const LISTS = [
         name: "Papers",
         isSolved: false,
         id: "4564efssasdssd",
+      },
+      {
+        name: "Cola",
+        isSolved: true,
+        id: "aqswdqwtre54d",
+      },
+      {
+        name: "Cola Cola",
+        isSolved: true,
+        id: "aqswdqwasds654d",
       },
       {
         name: "Scissors",
